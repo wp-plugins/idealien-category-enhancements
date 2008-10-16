@@ -1,7 +1,7 @@
 === Idealien Category Enhancements ===
 Contributors: firedolljamie, idealien
 Donate link: http://www.idealienstudios.com
-Tags: category, template, post
+Tags: category, template, post, idealien
 Requires at least: 2.5
 Tested up to: 2.6.2
 Stable tag: 1trunk
