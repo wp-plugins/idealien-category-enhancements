@@ -4,7 +4,7 @@ Donate link: http://www.idealienstudios.com
 Tags: category, template, post, idealien
 Requires at least: 2.5
 Tested up to: 2.6.2
-Stable tag: 1trunk
+Stable tag: trunk
 
 Modification to the category and post template logic to behave like pages (selectable through admin)
 
@@ -13,6 +13,7 @@ Modification to the category and post template logic to behave like pages (selec
 The idea for this plugin was to expose into the manage > categories portion of the admin console a way for the user to select a template for the category based on a drop-down list. Not that dissimilar from the process a user can select a template for a page based on the drop-down list. As a result, any queries to the category url would render the page according to the category template selected. In addition, the post in a given category will look for an equivelently named template in order to render queries to itself.
 
 Features: 
+
 * You can now use one category template for multiple categories without identical copies of the category-##.php
 
 * All category / post templates and settings are relative to the current theme applied to Wordpress
@@ -27,7 +28,7 @@ Features:
 
 1. Download the plugin
 
-2. Unzip files to your wp-content/plugins directory on your local PC / repository
+2. Unzip files to your wp-content/plugins directory on your local PC
 
 3. Upload the files from local PC to your web server
 
