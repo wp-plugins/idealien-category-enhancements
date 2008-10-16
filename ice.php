@@ -1,18 +1,11 @@
 <?php
 /*
 Plugin Name: Idealien Category Enhancements
-Plugin URI: http://www.idealienstudios.com/wordpress/plugins/ice/
-Description: ICE exposes the ability to use named templates for posts and categories maintained through the <strong>manage > categories</strong> admin panel, similar to the default behaviour for page templates. Plugin options are accessible under <strong>settings > category enhancements</strong>. Developed by <a href="http://idealienstudios.com">Idealien Studios</a> with assistance from <a href="http://www.phpexperts.ca">PHP Experts</a>.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Plugin URI: http://www.idealienstudios.com/code/ice/
+Description: ICE exposes the ability to use named templates for posts and categories maintained through the <strong>manage > categories</strong> admin panel, similar to the default behaviour for page templates. Plugin options are accessible under <strong>settings > category enhancements</strong>.
 Version: 1.0
 Author: Idealien Studios
-Author URI: http://www.idealienstudios.com/code/ICE/
-
--Documentation
-	-How to install
-	-How to write templates
-	-IdealienStudios.com launch page
-	-How to get plugin listed in WP.org extend / plugins
-	-Uninstall function (Remove options table entry and drop custom table)
+Author URI: http://www.idealienstudios.com/
 */
 
 //Global Debug var
