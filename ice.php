@@ -255,7 +255,7 @@ function print_iceOptions_form() {
 				</td>
 			</tr>
 			<tr class="form-field form-required">
-				<th valign="top" scope="row"><label for="ice_cat_inherit"><?php _e("Sub-Category Interitance?", 'ice_trans_domain' ); ?></label></th>
+				<th valign="top" scope="row"><label for="ice_cat_inherit"><?php _e("Sub-Category Inheritance?", 'ice_trans_domain' ); ?></label></th>
 				<td>
 					<input name="ice_cat_inherit" type="radio" value="Y" <?php if ($form_ice_cat_inherit == "Y") { echo "checked";} ?>><?=__('Yes', 'ice_trans_domain' ); ?></input>
 					<input name="ice_cat_inherit" type="radio" value="N" <?php if ($form_ice_cat_inherit == "N") { echo "checked";} ?>><?=__('No', 'ice_trans_domain' ); ?></input>
