@@ -3,7 +3,7 @@
 Plugin Name: Idealien Category Enhancements
 Plugin URI: http://www.idealienstudios.com/code/ice/
 Description: ICE exposes the ability to use named templates for posts and categories maintained through the <strong>manage > categories</strong> admin panel, similar to the default behaviour for page templates. Plugin options are accessible under <strong>settings > category enhancements</strong>.
-Version: 1.0
+Version: 1.1
 Author: Idealien Studios
 Author URI: http://www.idealienstudios.com/
 */
@@ -96,7 +96,7 @@ function ice_add_pages() {
 	
     if (function_exists('add_options_page')) {
 		// Add a new submenu under Options:
-		add_options_page('Category Enhancements', 'Category Enhancements', 8, 'categoryenhancements', 'ice_options_page');
+		add_options_page('Idealien Cats', 'Idealien Cats', 8, 'categoryenhancements', 'ice_options_page');
 	}
 }
 
@@ -179,113 +179,118 @@ function print_iceOptions_form() {
 	
 	//Present data to user in a form for modification
 	?>
-	<style type="text/css">
-		.iceRight { 
-			width:160px;
-			float:right;
-			padding: 7px;
-		}
-		.iceRight h2 {
-			background-color: #247fab; 
-			border: 1px solid #f4f4f4; 
-			text-align:center;
-			padding: 4px;
-			color: #FFF;
-			font-size: 16px;
-			font-weight: bold;
-		}
-		.iceRight ul {
-			padding-left: 15px;
-		}
-	</style>
 	
-	
-	<?php _e("Configure the options below and adjust category / template associations through the manage > categories admin panel.", 'ice_trans_domain' ); ?>
-	<div class="iceRight">
-		<h2><?=__('Plugin Support', 'ice_trans_domain')?></h2>
-		<ul>
-			<li><a href="http://www.idealienstudios.com/code/ICE/"><?=__('Plugin Support Page', 'ice_trans_domain')?></a></li>
-			<li><a href="http://www.idealienstudios.com"><?=__('Idealien Studios', 'ice_trans_domain')?></a></li>
-			<li><a href="http://www.phpexperts.ca"><?=__('PHP Experts', 'ice_trans_domain')?></a></li>
-			<li><a href="http://wordpress.org/support/"><?=__('WordPress Support', 'ice_trans_domain')?></a></li>
-		</ul>			
-		<h2><?=__('Donations', 'ice_trans_domain')?></h2>
-		<div style="text-align:center;">
-			<?=__('Are appreciated!', 'ice_trans_domain')?><br />
-			<form name="_xclick" action="https://www.paypal.com/row/cgi-bin/webscr" method="post">
-			<input type="hidden" name="cmd" value="_xclick">
-			<input type="hidden" name="business" value="jamie.oastler@gmail.com">
-			<input type="hidden" name="item_name" value="Wordpress Plugin Development Donation">
-			<input type="hidden" name="currency_code" value="CAD">
-			<input type="image" src="http://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Paypal - It's fast, free and secure!">
-			</form>
-			<?=__('via paypal', 'ice_trans_domain')?>
-		</div>
-	</div>
-	<form method="post">
-		<table class="form-table" style="width:800px;">
-			<tr class="form-field form-required">
-				<th valign="top" scope="row" style="width:220px;"><label for="ice_cat_enhance"><?php _e("Enhanced Categories?", 'ice_trans_domain' ); ?></label></th>
+	<?php _e("Configure the options below and adjust category / template associations through the manage > categories admin panel.", 'ice_trans_domain' );
+		echo "<br/>";
+    _e("Similar to a theme styles.css file, your category template files MUST have the following headers in php comment at the top:", 'ice_trans_domain' ); ?>
+<pre><em>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;?php /*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Category Template: Custom Template Name
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Template URI: URL for template designer
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Description: A short description goes here.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/ ?>
+</em></pre>
+<form method="post">
+	<table class="form-table">
+       	<tbody>
+			<tr valign="top">
+				<th scope="row"><label for="ice_cat_enhance"><?php _e("Enhanced Categories?", 'ice_trans_domain' ); ?></label></th>
 				<td>
-					<input name="ice_cat_enhance" type="radio" value="Y" <?php if ($form_ice_cat_enhance == "Y") { echo "checked";} ?>><?=__('Enhanced', 'ice_trans_domain')?></input>
-					<input name="ice_cat_enhance" type="radio" value="N" <?php if ($form_ice_cat_enhance == "N") { echo "checked";} ?>><?=__('Default', 'ice_trans_domain')?></input>
-					<br/><?php _e("This will determine whether category presentation uses the enhanced plugin logic or default Wordpress category logic. When you de-activate the plugin, this will be reset to default as an extra precaution.", 'ice_trans_domain' ); ?>
+					<input name="ice_cat_enhance" type="radio" value="Y" <?php if ($form_ice_cat_enhance == "Y") { echo "checked";} ?>><?=__('Enhanced (On)', 'ice_trans_domain')?></input>
+					<input name="ice_cat_enhance" type="radio" value="N" <?php if ($form_ice_cat_enhance == "N") { echo "checked";} ?>><?=__('Default (Off)', 'ice_trans_domain')?></input>
+				</td>
+                <td>
+					<span class="setting-description">
+						<?php _e("Enhanced logic for categories or Wordpress default?", 'ice_trans_domain' ); ?>
+					</span>
 				</td>
 			</tr>
-			<tr class="form-field form-required">
-				<th valign="top" scope="row"><label for="ice_cat_prefix"><?php _e("Category Template Prefix:", 'ice_trans_domain' ); ?></label></th>
+			<tr valign="top">
+				<th scope="row"><label for="ice_cat_prefix"><?php _e("Category Template Prefix:", 'ice_trans_domain' ); ?></label></th>
 				<td>
 					<input type="text" name="ice_cat_prefix" size="20" value="<?php echo $form_ice_cat_prefix; ?>" />
-					<br/><?php _e("This represents the naming convention for the category templates inside your theme directory. The default Wordpress value would be 'category-'.", 'ice_trans_domain' ); ?>
+				</td>
+                <td>
+					<span class="setting-description">
+						<?php _e("Naming convention for category templates in active theme directory.", 'ice_trans_domain' ); ?>
+					</span>
 				</td>
 			</tr>
-			<tr class="form-field form-required">
-				<th valign="top" scope="row"><label for="ice_post_enhance"><?php _e("Enhance Posts?", 'ice_trans_domain' ); ?></label></th>
+		
+			<tr valign="top">
+				<th scope="row"><label for="ice_post_enhance"><?php _e("Enhance Posts?", 'ice_trans_domain' ); ?></label></th>
 				<td>
-					<input name="ice_post_enhance" type="radio" value="Y" <?php if ($form_ice_post_enhance == "Y") { echo "checked";} ?>><?=__('Enhanced', 'ice_trans_domain' ); ?></input>
-					<input name="ice_post_enhance" type="radio" value="N" <?php if ($form_ice_post_enhance == "N") { echo "checked";} ?>><?=__('Default', 'ice_trans_domain' ); ?></input>
-					<br/><?php _e("This will determine whether post presentation uses the enhanced plugin logic or default Wordpress post logic. When you de-activate the plugin, this will be reset to default as an extra precaution.", 'ice_trans_domain' ); ?>
+					<input name="ice_post_enhance" type="radio" value="Y" <?php if ($form_ice_post_enhance == "Y") { echo "checked";} ?>><?=__('Enhanced (On)', 'ice_trans_domain' ); ?></input>
+					<input name="ice_post_enhance" type="radio" value="N" <?php if ($form_ice_post_enhance == "N") { echo "checked";} ?>><?=__('Default (Off)', 'ice_trans_domain' ); ?></input>
+				</td>
+                <td>
+					<span class="setting-description">
+						<?php _e("Enhanced logic for posts or Wordpress default?", 'ice_trans_domain' ); ?>
+					</span>
 				</td>
 			</tr>
-			<tr class="form-field form-required">
-				<th valign="top" scope="row"><label for="ice_cat_enhance"><?php _e("Post Template Prefix:", 'ice_trans_domain' ); ?></label></th>
+   
+			<tr valign="top">
+				<th scope="row"><label for="ice_cat_enhance"><?php _e("Post Template Prefix:", 'ice_trans_domain' ); ?></label></th>
 				<td>
 					<input type="text" name="ice_post_prefix" size="20" value="<?php echo $form_ice_post_prefix; ?>">
-					<br/><?php _e("This represents the naming convention for the post templates inside your theme directory. The default Wordpress value would be 'single'.", 'ice_trans_domain' ); ?>
+				</td>
+                <td>
+                	<span class="setting-description">
+						<?php _e("Naming convention for post templates inside active theme directory.", 'ice_trans_domain' ); ?>
+					</span>
 				</td>
 			</tr>
-			<tr class="form-field form-required">
-				<th valign="top" scope="row"><label for="ice_cat_inherit"><?php _e("Sub-Category Inheritance?", 'ice_trans_domain' ); ?></label></th>
+			<tr valign="top">
+				<th scope="row"><label for="ice_cat_inherit"><?php _e("Sub-Category Inheritance?", 'ice_trans_domain' ); ?></label></th>
 				<td>
-					<input name="ice_cat_inherit" type="radio" value="Y" <?php if ($form_ice_cat_inherit == "Y") { echo "checked";} ?>><?=__('Yes', 'ice_trans_domain' ); ?></input>
-					<input name="ice_cat_inherit" type="radio" value="N" <?php if ($form_ice_cat_inherit == "N") { echo "checked";} ?>><?=__('No', 'ice_trans_domain' ); ?></input>
-					<br/><?php _e("If set to 'No', only categories with specific template associations will use the modified logic.<br/>If set to 'Yes', sub-categories will use the custom template of a parent category (if they don't have a template association defined to itself) before using the standard Wordpress logic.", 'ice_trans_domain' ); ?>
+					<input name="ice_cat_inherit" type="radio" value="Y" <?php if ($form_ice_cat_inherit == "Y") { echo "checked";} ?>>On</input>
+					<input name="ice_cat_inherit" type="radio" value="N" <?php if ($form_ice_cat_inherit == "N") { echo "checked";} ?>>Off</input>
 				</td>
-			</tr>
-			<tr class="form-field form-required">
-				<th valign="top" scope="row"></th>
 				<td>
-					 <input type="submit" name="submit" value="<?=__('Update Options', 'ice_trans_domain' ); ?>" />
+					<span class="setting-description"><?php _e("Off - Only categories with specific templates selected will use modified logic.<br/>On - Sub-categories will use the template of a parent category if a specific template is not selected for it.", 'ice_trans_domain' ); ?></span>
 				</td>
 			</tr>
-		</table>
-	</form>
+			<tr valign="top">
+				<th scope="row"></th>
+				<td>
+					 <p class="submit">
+	                     <input type="submit" name="submit" value="<?php _e('Update Options', 'ice_trans_domain' ); ?>" class="button-primary"/>
+                     </p>
+				</td>
+                <td>&nbsp;</td>
+			</tr>
+		</tbody>
+	</table>
+</form>
 	
 	
-	<h2>Notes:</h2>
+	<h3>Notes:</h3>
 	<?php $current_Theme = get_theme(get_current_theme()); ?>
 	<ul>
-		<li>All category / post templates and settings are relative to the current theme applied to Wordpress (<?php echo $current_Theme['Name'] . " ver. " . $current_Theme['Version']; ?>)</li>
+		<li>All category / post templates and settings are relative to the current selected theme: <b><?php echo $current_Theme['Name'] . " ver. " . $current_Theme['Version']; ?></b></li>
 		<li>If you select a different theme, the entries will remain in the database in case you want to revert back.</li>
 		<li>If you delete a category, all records (regardless of theme / version) will be deleted</li>
 		<li>The Sub-Category Inheritance option applies for both category templates and post templates.</li> 
-		<li>Similar to a theme styles.css file, for best usability your category template files should have the following comments at the top:<br/>
-		<pre>&lt;?php /*
-Category Template: Custom Template Name
-Template URI: URL path where bloggers can find more information about your template(s)
-Description: A short description goes here.
-*/ ?></pre></li>
 	</ul>
+    
+    <h3><?php _e('Plugin Support', 'ice_trans_domain')?></h3>
+	<ul>
+		<li><a href="http://www.idealienstudios.com/code/ICE/"><?php _e('Plugin Support Page', 'ice_trans_domain')?></a></li>
+		<li><a href="http://www.idealienstudios.com"><?php _e('Idealien Studios', 'ice_trans_domain')?></a></li>
+		<li><a href="http://www.phpexperts.ca"><?php _e('PHP Experts', 'ice_trans_domain')?></a></li>
+		<li><a href="http://wordpress.org/support/"><?php _e('WordPress Support', 'ice_trans_domain')?></a></li>
+	</ul>
+    
+	<form name="_xclick" action="https://www.paypal.com/row/cgi-bin/webscr" method="post">
+		<input type="hidden" name="cmd" value="_xclick">
+		<input type="hidden" name="business" value="jamie.oastler@gmail.com">
+		<input type="hidden" name="item_name" value="Wordpress Plugin Development Donation">
+		<input type="hidden" name="currency_code" value="CAD">
+		<input type="image" src="http://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="Paypal - It's fast, free and secure!">
+	</form>
+    
+    <?php _e('If you find this plugin useful, donations are greatly appreciated via Paypal.', 'ice_trans_domain'); ?>
 	<?php
 }
 
@@ -299,11 +304,20 @@ function ice_edit_category_form_ob_start($category)  {
 }
 
 function ice_edit_category_form_trap ($buffer) {
-	//If WP improves the position of the edit_category_form hook call, this may become outdated.
 	global $DEBUG;
 	
-	$new_row = ice_edit_category_form_draw();
-	$buffer = preg_replace('/<\/table>/', $new_row.'</table>', $buffer);
+	
+	//Evaluate contents of edit_category_form call if it is <2.6 based style or >= 2.7 style.
+	if (preg_match('/<\/table>/', $buffer)) {
+		$new_row = ice_edit_category_form_draw("Table");
+		
+    	$buffer = preg_replace('/<\/table>/', $new_row.'</table>', $buffer);
+	} else {
+		$new_row = ice_edit_category_form_draw("Div");
+    	//$buffer = preg_replace('/<\/div>/', $new_row.'</div>', $buffer);
+		$buffer = preg_replace('/<p class="submit">/', $new_row.'<p class="submit">', $buffer);
+		
+	}
 	return $buffer;
 }
 
@@ -312,7 +326,7 @@ function ice_edit_category_form_ob_end_flush () {
 	ob_end_flush();
 }
 
-function ice_edit_category_form_draw()  {
+function ice_edit_category_form_draw($usageType)  {
 	//Check current theme for category templates which match filename prefix from options table.
 	//Inspect for template information (similar to what styles.css uses for theme info)
 	//Compare against database for current category and modify selected option
@@ -321,12 +335,19 @@ function ice_edit_category_form_draw()  {
 	
 	$table_name = $wpdb->prefix . "catTemplate_relationships";
 	
-	//Create a new form table row 
-	$html = "
-	<tr class=\"form-field\">
-		<th scope=\"row\" valign=\"top\"><label for=\"category_template\">". __( 'Template', 'ice_trans_domain' ) ."</label></th>
-		<td>
-			<select id=\"category_template\" class=\"postform\" name=\"category_template\">
+	if ($usageType == "Table") {
+		//Create a new form table row 
+		$html = "<tr class=\"form-field\"><th scope=\"row\" valign=\"top\">";
+	} else {
+		$html = "<div class=\"form-field\">";
+	}
+		
+	$html .= "<label for=\"category_template\">". __( 'Template', 'ice_trans_domain' ) ."</label>";
+
+	if ($usageType == "Table") {
+		$html .= "</th><td>";
+	}	
+		$html .= "<select id=\"category_template\" class=\"postform\" name=\"category_template\">
 			<option></option>";
 	
 	$template_dir = get_theme_root() . "/" . get_option('template');
@@ -370,10 +391,15 @@ function ice_edit_category_form_draw()  {
 		//This scenario "should" never happen - when would you not have a theme enabled?
 		$html .= "<option>Unable to locate " . $template_dir . "</option>";
 	}
-	$html .= "</select><br/>";
-	$html .= __('Select the template (from the theme) you would like this category to use.');
-	$html .= "</td>";
-	$html .= "</tr>";
+	$html .= "</select>";
+	$html .= __('<p>Select the template from the current theme you would like this category to use.</p>');
+
+	if ($usageType == "Table") {
+		//Create a new form table row 
+		$html .= "</td></tr>";
+	} else {
+		$html .= "</div>";
+	}
 
 	return $html;	
 }
@@ -386,6 +412,7 @@ function get_category_template_data( $template_file ) {
 		'a' => array(
 			'href' => array(),'title' => array()
 			),
+
 		'abbr' => array(
 			'title' => array()
 			),
