@@ -2,8 +2,8 @@
 /*
 Plugin Name: Idealien Category Enhancements
 Plugin URI: http://www.idealienstudios.com/code/ice/
-Description: ICE exposes the ability to use named templates for posts and categories maintained through the <strong>manage > categories</strong> admin panel, similar to the default behaviour for page templates. Plugin options are accessible under <strong>settings > category enhancements</strong>.
-Version: 1.1
+Description: ICE enables WP users to select templates for categories and posts via the <strong>manage > categories</strong> admin panel. Plugin options are accessible under <strong>settings > Idealien Cats</strong>. Now supports child themes.
+Version: 1.2
 Author: Idealien Studios
 Author URI: http://www.idealienstudios.com/
 */
@@ -46,11 +46,11 @@ function set_ice_options () {
 //Generate ICE options as an array within a single record in options table
 	$data = array(
 		'ice_cat_enhance'		=> 'Y',
-		'ice_cat_prefix'		=> 'categoryTemplate',
+		'ice_cat_prefix'		=> 'category-',
 		'ice_cat_inherit'		=> 'Y',
 		'ice_post_enhance'		=> 'Y',
-		'ice_post_prefix'		=> 'singleTemplate',
-		'ice_version'			=> '1.0'
+		'ice_post_prefix'		=> 'single-',
+		'ice_version'			=> '1.2'
 	);
 
 	add_option('ice_settings',$data);
@@ -78,6 +78,10 @@ function set_ice_options () {
 }
 
 function unset_ice_options () {
+	/* V1.2 Update - Commented out effects of de-activating plugin on ICE options, but kept the function hook
+	                 incase others want to customize this to the point where modifying database entries at
+				  time of de-activation makes sense. */
+	/*
 	//De-activate the two options which impact category / post template presentation logic
 	global $ice_settings;
 	global $DEBUG;
@@ -88,6 +92,7 @@ function unset_ice_options () {
 
 	//If you are extending this plugin, in development mode it may be better to use the table delete option when de-activating
 	//delete_option("ice_settings");
+	*/
 }
 
 function ice_add_pages() {
@@ -194,14 +199,14 @@ function print_iceOptions_form() {
 	<table class="form-table">
        	<tbody>
 			<tr valign="top">
-				<th scope="row"><label for="ice_cat_enhance"><?php _e("Enhanced Categories?", 'ice_trans_domain' ); ?></label></th>
+				<th scope="row"><label for="ice_cat_enhance"><?php _e("Enhance Categories?", 'ice_trans_domain' ); ?></label></th>
 				<td>
-					<input name="ice_cat_enhance" type="radio" value="Y" <?php if ($form_ice_cat_enhance == "Y") { echo "checked";} ?>><?=__('Enhanced (On)', 'ice_trans_domain')?></input>
-					<input name="ice_cat_enhance" type="radio" value="N" <?php if ($form_ice_cat_enhance == "N") { echo "checked";} ?>><?=__('Default (Off)', 'ice_trans_domain')?></input>
+					<input name="ice_cat_enhance" type="radio" value="Y" <?php if ($form_ice_cat_enhance == "Y") { echo "checked";} ?>><?=__('Yes', 'ice_trans_domain')?></input>
+					<input name="ice_cat_enhance" type="radio" value="N" <?php if ($form_ice_cat_enhance == "N") { echo "checked";} ?>><?=__('No', 'ice_trans_domain')?></input>
 				</td>
                 <td>
 					<span class="setting-description">
-						<?php _e("Enhanced logic for categories or Wordpress default?", 'ice_trans_domain' ); ?>
+						<?php _e("Yes = Enhanced logic for categories, No = Wordpress default", 'ice_trans_domain' ); ?>
 					</span>
 				</td>
 			</tr>
@@ -220,12 +225,12 @@ function print_iceOptions_form() {
 			<tr valign="top">
 				<th scope="row"><label for="ice_post_enhance"><?php _e("Enhance Posts?", 'ice_trans_domain' ); ?></label></th>
 				<td>
-					<input name="ice_post_enhance" type="radio" value="Y" <?php if ($form_ice_post_enhance == "Y") { echo "checked";} ?>><?=__('Enhanced (On)', 'ice_trans_domain' ); ?></input>
-					<input name="ice_post_enhance" type="radio" value="N" <?php if ($form_ice_post_enhance == "N") { echo "checked";} ?>><?=__('Default (Off)', 'ice_trans_domain' ); ?></input>
+					<input name="ice_post_enhance" type="radio" value="Y" <?php if ($form_ice_post_enhance == "Y") { echo "checked";} ?>><?=__('Yes', 'ice_trans_domain' ); ?></input>
+					<input name="ice_post_enhance" type="radio" value="N" <?php if ($form_ice_post_enhance == "N") { echo "checked";} ?>><?=__('No', 'ice_trans_domain' ); ?></input>
 				</td>
                 <td>
 					<span class="setting-description">
-						<?php _e("Enhanced logic for posts or Wordpress default?", 'ice_trans_domain' ); ?>
+						<?php _e("Yes = Enhanced logic for posts, No = Wordpress default", 'ice_trans_domain' ); ?>
 					</span>
 				</td>
 			</tr>
@@ -326,6 +331,66 @@ function ice_edit_category_form_ob_end_flush () {
 	ob_end_flush();
 }
 
+function ice_edit_category_form_parseCategories($theme_dir, $usage) {
+	global $wpdb, $cat_ID;
+	global $DEBUG;
+	
+	$table_name = $wpdb->prefix . "catTemplate_relationships";
+	
+	//If theme directory exists open it for parsing category templates
+	if ($handle = @ opendir($theme_dir)) {
+			
+		//Retrieve the category prefix from the options table
+		$ice_settings = get_option('ice_settings');
+		$categoryPrefix = $ice_settings['ice_cat_prefix'];
+				
+		//Loop through all the files in the directory
+		while (false !== ($file = readdir($handle))) {
+				
+			//Filter to only work with those files which match the category prefix
+			if (preg_match("/$categoryPrefix/", $file, $templateFilename)) {
+
+				//Inspect header of category template file for generic info to display
+				$categoryData = get_category_template_data($theme_dir . "/" . $file);
+				$filename = str_replace(array($categoryPrefix,'.php'),'',$file);
+				if ($categoryData['template_name'] == "") {
+					$details = $filename;
+				} else {
+					$details = $categoryData['template_name'] . " - " . $categoryData['template_desc'];
+				}
+				
+				$ct = current_theme_info();
+				$current_ThemeName = $ct -> name;
+				$current_ThemeVersion = $ct -> version;
+						
+				if ($wpdb->get_var ("SELECT template FROM {$table_name} WHERE theme = '{$current_ThemeName}' AND themeVersion = '{$current_ThemeVersion}' AND category = {$cat_ID} AND template = '{$filename}'")) {
+					if ($usage == 'child') {
+						$themeOptions .= "<option selected value=" . $filename . ">[C] " . $details . "</option>";
+					} elseif ($usage == 'parent') {
+						$themeOptions .= "<option selected value=" . $filename . ">[P] " . $details . "</option>";
+					} else {
+						$themeOptions .= "<option selected value=" . $filename . ">" . $details . "</option>";
+					}
+				} else {
+					if ($usage == 'child') {
+						$themeOptions .= "<option value=" . $filename . ">[C] " . $details . "</option>";
+					} elseif ($usage == 'parent') {
+						$themeOptions .= "<option value=" . $filename . ">[P] " . $details . "</option>";
+					} else {
+						$themeOptions .= "<option value=" . $filename . ">" . $details . "</option>";
+					}
+				}
+			}
+		}
+	    closedir($handle);
+				
+	} else { 
+		//This scenario "should" never happen - when would you not have a theme enabled?
+		$themeOptions .= "<option>Unable to locate " . $theme_dir . "</option>";
+	}
+	
+	return $themeOptions;
+}
 function ice_edit_category_form_draw($usageType)  {
 	//Check current theme for category templates which match filename prefix from options table.
 	//Inspect for template information (similar to what styles.css uses for theme info)
@@ -333,7 +398,7 @@ function ice_edit_category_form_draw($usageType)  {
 	global $wpdb, $cat_ID;
 	global $DEBUG;
 	
-	$table_name = $wpdb->prefix . "catTemplate_relationships";
+	
 	
 	if ($usageType == "Table") {
 		//Create a new form table row 
@@ -349,50 +414,20 @@ function ice_edit_category_form_draw($usageType)  {
 	}	
 		$html .= "<select id=\"category_template\" class=\"postform\" name=\"category_template\">
 			<option></option>";
-	
-	$template_dir = get_theme_root() . "/" . get_option('template');
-			
-	//If theme directory exists open it for parsing category templates
-	if ($handle = @ opendir($template_dir)) {
-			
-		//Retrieve the category prefix from the options table
-		$ice_settings = get_option('ice_settings');
-		$categoryPrefix = $ice_settings['ice_cat_prefix'];
-				
-		//Loop through all the files in the directory
-		while (false !== ($file = readdir($handle))) {
-				
-			//Filter to only work with those files which match the category prefix
-			if (preg_match("/$categoryPrefix/", $file, $templateFilename)) {
 
-				//Inspect header of category template file for generic info to display
-				$categoryData = get_category_template_data($template_dir . "/" . $file);
-				$filename = str_replace(array($categoryPrefix,'.php'),'',$file);
-				if ($categoryData['template_name'] == "") {
-					$details = $filename;
-				} else {
-					$details = $categoryData['template_name'] . " - " . $categoryData['template_desc'];
-				}
-				
-				$ct = current_theme_info();
-				$current_ThemeName = $ct -> name;
-				$current_ThemeVersion = $ct -> version;
-						
-				if ($wpdb->get_var ("SELECT template FROM {$table_name} WHERE theme = '{$current_ThemeName}' AND themeVersion = '{$current_ThemeVersion}' AND category = {$cat_ID} AND template = '{$filename}'")) {
-					$html .= "<option selected value=" . $filename . ">" . $details . "</option>";
-				} else {
-					$html .= "<option value=" . $filename . ">" . $details . "</option>";
-				}
-			}
-		}
-	    closedir($handle);
-				
-	} else { 
-		//This scenario "should" never happen - when would you not have a theme enabled?
-		$html .= "<option>Unable to locate " . $template_dir . "</option>";
+	$template_dir = get_theme_root() . "/" . get_option('template');
+	
+	//Check if we are using a child theme and parseCategories from both if applicable
+	$child_dir = get_theme_root() . "/" . get_option('stylesheet');
+	if ($template_dir == $child_dir) {
+		$html .= ice_edit_category_form_parseCategories($template_dir, 'single');
+	} else {
+		$html .= ice_edit_category_form_parseCategories($template_dir, 'parent');
+		$html .= ice_edit_category_form_parseCategories($child_dir, 'child');
 	}
+	
 	$html .= "</select>";
-	$html .= __('<p>Select the template from the current theme you would like this category to use.</p>');
+	$html .= __('<br/><span class="description">Select the template from the current theme you would like this category to use.</span>');
 
 	if ($usageType == "Table") {
 		//Create a new form table row 
@@ -518,24 +553,38 @@ function ice_category_template($template, $category_id = '') {
 		
 		// This echo is just for debug to show the query
 		if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>Querying: <strong>$sql</strong><br/>Result:<strong><pre>".print_r($result,true)."</pre></strong></div><br/><br/>";
-			
-		$custom_template = TEMPLATEPATH . '/' . $ice_settings['ice_cat_prefix'] . $result[0] -> template . ".php";
-
-		// This echo is just for debug to show what we were looking for
-		if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>Checking for existence of: <strong>$custom_template</strong></div><br/><br/>";
-			
+		
+		//$custom_template = TEMPLATEPATH . '/' . $ice_settings['ice_cat_prefix'] . $result[0] -> template . ".php";
+		$custom_template_optionTemplate = get_theme_root() . "/" . get_option('template') . "/" . $ice_settings['ice_cat_prefix'] . $result[0] -> template . ".php";
+	
+		//Check if we are using a child theme and parseCategories from both if applicable
+		$custom_template_optionChild = get_theme_root() . "/" . get_option('stylesheet') . "/" . $ice_settings['ice_cat_prefix'] . $result[0] -> template . ".php";
+		
+		if ($DEBUG) {
+			echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>";
+			echo "Template filename = " . $custom_template_optionTemplate . "<br/>";
+			echo "Child filename = " . $custom_template_optionChild . "<br/>";
+			echo "</div><br/><br/>";
+		}
+		
 		// If the custom template has been found in the current template directory
-		if ( file_exists( $custom_template ) ) {
+		if ( file_exists( $custom_template_optionChild ) ) {
 			
 			// This echo is just for debug to show we're pulling the category id
-			if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>This is the custom template for category id: <strong>$category_id</strong><br/><br/>It's located at <strong>$custom_template</strong></div><br/><br/>";
+			if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>This is the custom template for category id: <strong>$category_id</strong><br/><br/>It's located at <strong>$custom_template_optionChild</strong></div><br/><br/>";
 			
 			// Return the location of the custom template file.  This needs to be the 
 			// absolute location relative to the root filesystem on the host server.
-			return $custom_template;
-		} 
-		else {
+			return $custom_template_optionChild;
+		} elseif ( file_exists( $custom_template_optionTemplate ) ) {
 			
+			// This echo is just for debug to show we're pulling the category id
+			if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>This is the custom template for category id: <strong>$category_id</strong><br/><br/>It's located at <strong>$custom_template_optionTemplate</strong></div><br/><br/>";
+			
+			// Return the location of the custom template file.  This needs to be the 
+			// absolute location relative to the root filesystem on the host server.
+			return $custom_template_optionTemplate;
+		} else {
 			// If a custom template hasn't been found
 			// and sub categories inherit from their parents
 			// check the category's parents
@@ -590,22 +639,38 @@ function ice_post_template($template, $category_id = '') {
 		// This echo is just for debug to show the query
 		if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>Querying: <strong>$sql</strong><br/>Result:<strong><pre>".print_r($result,true)."</pre></strong></div><br/><br/>";
 			
-		$custom_template = TEMPLATEPATH . '/' . $ice_settings['ice_post_prefix'] . $result[0] -> template . ".php";
+		$custom_template_optionTemplate = get_theme_root() . "/" . get_option('template') . "/" . $ice_settings['ice_post_prefix'] . $result[0] -> template . ".php";
 
-		// This echo is just for debug to show what we were looking for
-		if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>Checking for existence of: <strong>$custom_template</strong></div><br/><br/>";
-			
+		//Check if we are using a child theme and parseCategories from both if applicable
+		$custom_template_optionChild = get_theme_root() . "/" . get_option('stylesheet') . "/" . $ice_settings['ice_post_prefix'] . $result[0] -> template . ".php";
+		
+		if ($DEBUG) {
+			echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>";
+			echo "Template filename = " . $custom_template_optionTemplate . "<br/>";
+			echo "Child filename = " . $custom_template_optionChild . "<br/>";
+			echo "</div><br/><br/>";
+		}
+
+		
 		// If the custom template has been found in the current template directory
-		if ( file_exists( $custom_template ) ) {
+		if ( file_exists( $custom_template_optionChild ) ) {
 			
 			// This echo is just for debug to show we're pulling the category id
-			if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>This is the custom template for category id: <strong>$category_id</strong><br/><br/>It's located at <strong>$custom_template</strong></div><br/><br/>";
+			if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>This is the custom template for category id: <strong>$category_id</strong><br/><br/>It's located at <strong>$custom_template_optionChild</strong></div><br/><br/>";
 			
 			// Return the location of the custom template file.  This needs to be the 
 			// absolute location relative to the root filesystem on the host server.
-			return $custom_template;
-		} 
-		else {
+			return $custom_template_optionChild;
+		} elseif ( file_exists( $custom_template_optionTemplate ) ) {
+			
+			// This echo is just for debug to show we're pulling the category id
+			if ($DEBUG) echo "<div style='border: 1px solid #666; padding: 15px; background: #CCF;'>This is the custom template for category id: <strong>$category_id</strong><br/><br/>It's located at <strong>$custom_template_optionChild</strong></div><br/><br/>";
+			
+			// Return the location of the custom template file.  This needs to be the 
+			// absolute location relative to the root filesystem on the host server.
+			return $custom_template_optionTemplate;
+		
+		} else {
 			
 			// If a custom template hasn't been found
 			// and sub categories inherit from their parents

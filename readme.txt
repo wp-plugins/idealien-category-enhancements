@@ -3,14 +3,14 @@ Contributors: firedolljamie, idealien
 Donate link: http://www.idealienstudios.com
 Tags: category, template, post, idealien
 Requires at least: 2.5
-Tested up to: 2.7
+Tested up to: 2.8
 Stable tag: trunk
 
 Modification to the category and post template logic to behave like pages (selectable through admin)
 
 == Description ==
 
-Manage category templates as easily as you manage page templates. Select which apply through the post > categories menu using file names that make sense, not category ID numbers. Now any views of the category (or sub-categories) will render the according to the category template selected. Posts in a given category can also use a category-based template.
+This plugin makes category templates be selectable by drop-down list from the manage > categories screen of the admin console. It makes the selection / use of category and post templates as easy as page templates. It also includes configuration options that allow you to configure whether sub-categories inherit templates from their parent if none are specified.
 
 Features: 
 
@@ -24,6 +24,8 @@ Features:
 
 * The Sub-Category Inheritance option applies for both category templates and post templates.
 
+* Now supports parent / child theme configurations.
+
 == Installation ==
 
 1. Download the plugin
@@ -34,17 +36,35 @@ Features:
 
 4. Activate the plugin through the plugins menu in Wordpress
 
-5. Go to the Settings > Idealien Cats menu to configure features
+5. Go to the Settings > Category Enhancements menu to configure features
 
-6. Develop template(s) which can take advantage of this functionality. Similar to a theme styles.css file, for best usability your category template files should have the following comments at the top:
+6. Develop template(s) which can take advantage of this functionality. Your category template files SHOULD have the following comments at the top:
 `<?php /*
 Category Template: Custom Template Name
-Template URI: URL path where bloggers can find more information about your template(s)
+Template URI: URL path where WP users can find more information about your template(s)
 Description: A short description goes here.
 */ ?> `
 
 == Frequently Asked Questions ==
 
+= How can I support this awesome plugin?
+
+Make feature suggestions at http://idealienstudios.com/projects/ICE/ or donate via paypal to jamie.oastler@gmail.com
+
+= Why did my custom templates suddenly stop working?
+
+Did you upgrade your theme? Selections from the manage > categories panel are stored based on theme directory and version.
+
+= This plugin is great for modifying the front-end of categories / posts, but what about the admin console?
+
+Check out examples of using ICE with [More Fields](http://wordpress.org/extend/plugins/more-fields/ "More Fields") on the [Idealien Templates Project Page](http://idealienstudios.com/projects/templates/ "Idealien Templates Project Page"). More Fields lets you create customized write panels with custom fields for easy to edit admin templates.
+
 = How can I find out more about this plugin including examples of its usage? =
 
-Visit the plugin homepage - [idealienstudios.com/code/plugins/ICE/](http://idealienstudios.com/code/plugins/ICE/ "ICE Plugin Page")
+Visit the plugin homepage - [idealienstudios.com/projects/ICE/](http://idealienstudios.com/projects/ICE/ "ICE Project Page")
+
+== Screenshots ==
+
+1. The options screen for Idealien Category Enhancements.
+
+
