@@ -43,7 +43,7 @@ Features:
 Category Template: Custom Template Name
 Template URI: URL path where WP users can find more information about your template(s)
 Description: A short description goes here.
-*/ ?> `
+*/ ?>`
 
 == Frequently Asked Questions ==
 
