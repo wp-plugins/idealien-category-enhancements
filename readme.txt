@@ -1,7 +1,7 @@
 === Idealien Category Enhancements ===
 Contributors: firedolljamie, idealien
 Donate link: http://www.idealienstudios.com
-Tags: category, template, post, idealien
+Tags: category, template, post, idealien, theme, cms, categories, customize, presentation, wp-as-a-cms
 Requires at least: 2.5
 Tested up to: 2.8
 Stable tag: trunk
@@ -47,15 +47,15 @@ Description: A short description goes here.
 
 == Frequently Asked Questions ==
 
-= How can I support this awesome plugin?
+= How can I support this awesome plugin? =
 
 Make feature suggestions at http://idealienstudios.com/projects/ICE/ or donate via paypal to jamie.oastler@gmail.com
 
-= Why did my custom templates suddenly stop working?
+= Why did my custom templates suddenly stop working? =
 
 Did you upgrade your theme? Selections from the manage > categories panel are stored based on theme directory and version.
 
-= This plugin is great for modifying the front-end of categories / posts, but what about the admin console?
+= This plugin is great for modifying the front-end of categories / posts, but what about the admin console? =
 
 Check out examples of using ICE with [More Fields](http://wordpress.org/extend/plugins/more-fields/ "More Fields") on the [Idealien Templates Project Page](http://idealienstudios.com/projects/templates/ "Idealien Templates Project Page"). More Fields lets you create customized write panels with custom fields for easy to edit admin templates.
 
