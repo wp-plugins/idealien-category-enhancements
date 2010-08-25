@@ -1,5 +1,5 @@
 === Idealien Category Enhancements ===
-Contributors: firedolljamie, idealien
+Contributors: idealien
 Donate link: http://www.idealienstudios.com
 Tags: category, template, post, idealien, theme, cms, categories, customize, presentation, wp-as-a-cms
 Requires at least: 2.5
@@ -46,6 +46,10 @@ Description: A short description goes here.
 */ ?>`
 
 == Frequently Asked Questions ==
+
+= Does this plugin work with WordPress 3.0?
+
+Not currently. With the custom post types functionality in 3.0, the purpose that I had in creating ICE has been solved through core code. I suggest you look at http://wordpress.org/extend/plugins/simple-custom-post-type-archives/ if you are wanting similar functionality through 3.0.
 
 = How can I support this awesome plugin? =
 
